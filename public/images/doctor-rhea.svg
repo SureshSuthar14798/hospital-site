@@ -1,0 +1,8 @@
+<svg width='800' height='640' viewBox='0 0 800 640' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='800' height='640' rx='36' fill='url(#bg)'/>
+  <circle cx='400' cy='210' r='108' fill='#FFE9D8'/>
+  <rect x='250' y='330' width='300' height='190' rx='90' fill='#257FFF'/>
+  <path d='M314 188C318 128 370 90 424 90C472 90 506 129 502 190C490 175 464 152 421 152C384 152 347 168 314 188Z' fill='#263249'/>
+  <text x='400' y='585' text-anchor='middle' fill='white' font-size='34' font-family='Arial, sans-serif' font-weight='700'>Dr. Rhea Kapoor</text>
+  <defs><linearGradient id='bg' x1='0' y1='0' x2='800' y2='640' gradientUnits='userSpaceOnUse'><stop stop-color='#F7FBFF'/><stop offset='1' stop-color='#DCEEFF'/></linearGradient></defs>
+</svg>

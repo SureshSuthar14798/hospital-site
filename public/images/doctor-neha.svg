@@ -1,0 +1,8 @@
+<svg width='800' height='640' viewBox='0 0 800 640' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='800' height='640' rx='36' fill='url(#bg)'/>
+  <circle cx='400' cy='210' r='108' fill='#FFE4D8'/>
+  <rect x='250' y='330' width='300' height='190' rx='90' fill='#0FAAB5'/>
+  <path d='M316 196C320 128 370 90 424 90C472 90 510 128 504 196C482 182 459 174 423 174C378 174 347 184 316 196Z' fill='#2A324A'/>
+  <text x='400' y='585' text-anchor='middle' fill='white' font-size='34' font-family='Arial, sans-serif' font-weight='700'>Dr. Neha Verma</text>
+  <defs><linearGradient id='bg' x1='0' y1='0' x2='800' y2='640' gradientUnits='userSpaceOnUse'><stop stop-color='#F3FDFF'/><stop offset='1' stop-color='#D8F7FF'/></linearGradient></defs>
+</svg>

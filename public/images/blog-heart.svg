@@ -1,0 +1,7 @@
+<svg width='1200' height='760' viewBox='0 0 1200 760' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='1200' height='760' rx='48' fill='url(#bg)'/>
+  <path d='M600 540C500 470 350 360 350 240C350 170 406 120 470 120C523 120 568 150 600 202C632 150 677 120 730 120C794 120 850 170 850 240C850 360 700 470 600 540Z' fill='#1D67E0'/>
+  <path d='M470 345H555L595 275L645 405L690 345H760' stroke='white' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'/>
+  <text x='84' y='110' fill='#143763' font-size='46' font-family='Arial, sans-serif' font-weight='700'>Preventive heart health</text>
+  <defs><linearGradient id='bg' x1='0' y1='0' x2='1200' y2='760' gradientUnits='userSpaceOnUse'><stop stop-color='#F6FBFF'/><stop offset='1' stop-color='#DCEEFF'/></linearGradient></defs>
+</svg>

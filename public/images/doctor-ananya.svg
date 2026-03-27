@@ -1,0 +1,9 @@
+<svg width='800' height='640' viewBox='0 0 800 640' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='800' height='640' rx='36' fill='url(#bg)'/>
+  <circle cx='400' cy='210' r='108' fill='#FFE8D9'/>
+  <rect x='250' y='330' width='300' height='190' rx='90' fill='#1D67E0'/>
+  <path d='M300 520C320 450 480 450 500 520' fill='#0F4DB6'/>
+  <path d='M315 190C315 128 365 92 414 92C468 92 498 132 494 188C486 178 465 160 432 158C370 153 343 186 315 190Z' fill='#24364E'/>
+  <text x='400' y='585' text-anchor='middle' fill='white' font-size='34' font-family='Arial, sans-serif' font-weight='700'>Dr. Ananya Sharma</text>
+  <defs><linearGradient id='bg' x1='0' y1='0' x2='800' y2='640' gradientUnits='userSpaceOnUse'><stop stop-color='#EEF6FF'/><stop offset='1' stop-color='#D9EBFF'/></linearGradient></defs>
+</svg>

@@ -1,0 +1,8 @@
+<svg width='1200' height='760' viewBox='0 0 1200 760' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='1200' height='760' rx='48' fill='url(#bg)'/>
+  <path d='M600 560C520 560 450 470 450 355C450 240 500 130 600 130C700 130 750 240 750 355C750 470 680 560 600 560Z' fill='#14AAB5'/>
+  <path d='M525 475C530 530 558 588 600 588C642 588 670 530 675 475' stroke='white' stroke-width='28' stroke-linecap='round'/>
+  <path d='M510 210C540 250 660 250 690 210' stroke='white' stroke-width='24' stroke-linecap='round'/>
+  <text x='84' y='110' fill='#104D55' font-size='46' font-family='Arial, sans-serif' font-weight='700'>Daily oral care guide</text>
+  <defs><linearGradient id='bg' x1='0' y1='0' x2='1200' y2='760' gradientUnits='userSpaceOnUse'><stop stop-color='#F3FFFF'/><stop offset='1' stop-color='#D8FBFF'/></linearGradient></defs>
+</svg>

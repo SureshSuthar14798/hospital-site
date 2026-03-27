@@ -1,0 +1,10 @@
+<svg width='1200' height='760' viewBox='0 0 1200 760' fill='none' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='1200' height='760' rx='48' fill='url(#bg)'/>
+  <rect x='520' y='140' width='160' height='470' rx='80' fill='#1D67E0'/>
+  <circle cx='600' cy='170' r='84' fill='#DCEEFF'/>
+  <circle cx='600' cy='590' r='84' fill='#DCEEFF'/>
+  <rect x='430' y='250' width='340' height='90' rx='45' fill='#77B0FF'/>
+  <rect x='430' y='420' width='340' height='90' rx='45' fill='#77B0FF'/>
+  <text x='84' y='110' fill='#143763' font-size='46' font-family='Arial, sans-serif' font-weight='700'>Bone and joint health</text>
+  <defs><linearGradient id='bg' x1='0' y1='0' x2='1200' y2='760' gradientUnits='userSpaceOnUse'><stop stop-color='#F7FBFF'/><stop offset='1' stop-color='#E4F2FF'/></linearGradient></defs>
+</svg>
