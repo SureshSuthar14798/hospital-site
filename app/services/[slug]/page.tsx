@@ -10,14 +10,19 @@ export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const service = services.find((item) => item.slug === params.slug);
+type ServiceDetailPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: ServiceDetailPageProps) {
+  const { slug } = await params;
+  const service = services.find((item) => item.slug === slug);
 
   if (!service) {
     return buildMetadata({
       title: 'Service not found',
       description: 'Service page not found.',
-      path: `/services/${params.slug}`
+      path: `/services/${slug}`
     });
   }
 
@@ -28,8 +33,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   });
 }
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
-  const service = services.find((item) => item.slug === params.slug);
+export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
+  const { slug } = await params;
+  const service = services.find((item) => item.slug === slug);
 
   if (!service) {
     notFound();

@@ -10,14 +10,19 @@ export function generateStaticParams() {
   return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((item) => item.slug === params.slug);
+type BlogDetailPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: BlogDetailPageProps) {
+  const { slug } = await params;
+  const post = blogPosts.find((item) => item.slug === slug);
 
   if (!post) {
     return buildMetadata({
       title: 'Article not found',
       description: 'Health article not found.',
-      path: `/blog/${params.slug}`
+      path: `/blog/${slug}`
     });
   }
 
@@ -28,8 +33,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   });
 }
 
-export default function BlogDetailPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((item) => item.slug === params.slug);
+export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const { slug } = await params;
+  const post = blogPosts.find((item) => item.slug === slug);
 
   if (!post) {
     notFound();

@@ -11,14 +11,19 @@ export function generateStaticParams() {
   return doctors.map((doctor) => ({ slug: doctor.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const doctor = doctors.find((item) => item.slug === params.slug);
+type DoctorDetailPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: DoctorDetailPageProps) {
+  const { slug } = await params;
+  const doctor = doctors.find((item) => item.slug === slug);
 
   if (!doctor) {
     return buildMetadata({
       title: 'Doctor not found',
       description: 'Doctor profile not found.',
-      path: `/doctors/${params.slug}`
+      path: `/doctors/${slug}`
     });
   }
 
@@ -29,8 +34,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   });
 }
 
-export default function DoctorDetailPage({ params }: { params: { slug: string } }) {
-  const doctor = doctors.find((item) => item.slug === params.slug);
+export default async function DoctorDetailPage({ params }: DoctorDetailPageProps) {
+  const { slug } = await params;
+  const doctor = doctors.find((item) => item.slug === slug);
 
   if (!doctor) {
     notFound();
