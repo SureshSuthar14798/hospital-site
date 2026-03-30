@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import type { Doctor, Service } from '@/lib/data';
+import { siteConfig, type Doctor, type Service } from '@/lib/data';
 
 type AppointmentFormProps = {
   doctors: Doctor[];
@@ -24,6 +24,7 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
   const [form, setForm] = useState(initialState);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
+  const [whatsappUrl, setWhatsappUrl] = useState('');
 
   const filteredDoctors = useMemo(() => {
     if (!form.department) {
@@ -33,9 +34,18 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
     return doctors.filter((doctor) => doctor.services.includes(form.department));
   }, [doctors, form.department]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const departmentName = useMemo(() => {
+    return services.find((service) => service.slug === form.department)?.title ?? form.department;
+  }, [form.department, services]);
+
+  const doctorName = useMemo(() => {
+    return doctors.find((doctor) => doctor.slug === form.doctor)?.name ?? form.doctor;
+  }, [doctors, form.doctor]);
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
+    setWhatsappUrl('');
 
     if (!form.patientName || !form.phone || !form.email || !form.department || !form.doctor || !form.date || !form.time) {
       setError('Please complete all required fields before submitting.');
@@ -44,23 +54,37 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
 
     try {
       setStatus('submitting');
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
-      });
 
-      if (!response.ok) {
-        throw new Error('Request failed');
-      }
+      const formattedDate = new Intl.DateTimeFormat('en-IN', {
+        dateStyle: 'long'
+      }).format(new Date(`${form.date}T00:00:00`));
+      const normalizedWhatsappNumber = siteConfig.whatsappPhone.replace(/\D/g, '');
+      const message = [
+        'New Appointment Request',
+        '',
+        `Patient Name: ${form.patientName}`,
+        `Phone: ${form.phone}`,
+        `Email: ${form.email}`,
+        `Department: ${departmentName}`,
+        `Doctor: ${doctorName}`,
+        `Preferred Date: ${formattedDate}`,
+        `Preferred Time: ${form.time}`,
+        `Symptoms / Message: ${form.message || 'Not provided'}`
+      ].join('\n');
+      const nextWhatsappUrl = `https://wa.me/${normalizedWhatsappNumber}?text=${encodeURIComponent(message)}`;
 
+      setWhatsappUrl(nextWhatsappUrl);
       setStatus('success');
       setForm(initialState);
+
+      const popup = window.open(nextWhatsappUrl, '_blank', 'noopener,noreferrer');
+
+      if (!popup) {
+        window.location.href = nextWhatsappUrl;
+      }
     } catch {
       setStatus('error');
-      setError('Unable to submit right now. Please call the hospital directly.');
+      setError('Unable to open WhatsApp right now. Please call the hospital directly.');
     }
   }
 
@@ -78,15 +102,15 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
         <div className='grid gap-5 sm:grid-cols-2'>
           <label className='grid gap-2 text-sm font-medium text-slate-700'>
             Patient name
-            <input placeholder='John Doe' value={form.patientName} onChange={(event) => updateField('patientName', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input placeholder='Pankaj Sharma' value={form.patientName} onChange={(event) => updateField('patientName', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
           </label>
           <label className='grid gap-2 text-sm font-medium text-slate-700'>
             Phone number
-            <input placeholder='+91 98765 43210' type='number' value={form.phone} onChange={(event) => updateField('phone', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input placeholder='+91 98765 43210' type='tel' value={form.phone} onChange={(event) => updateField('phone', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
           </label>
           <label className='grid gap-2 text-sm font-medium text-slate-700'>
             Email
-            <input placeholder='john.doe@example.com' type='email' value={form.email} onChange={(event) => updateField('email', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input placeholder='pankaj.sharma@example.com' type='email' value={form.email} onChange={(event) => updateField('email', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
           </label>
           <label className='grid gap-2 text-sm font-medium text-slate-700'>
             Department
@@ -127,7 +151,16 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
         {error ? <p className='mt-4 text-sm font-medium text-rose-600'>{error}</p> : null}
         {status === 'success' ? (
           <p className='mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700'>
-            Appointment request sent successfully. Our team will confirm by phone or email shortly.
+            WhatsApp opened with your appointment details. Please press send in WhatsApp to complete your request.
+          </p>
+        ) : null}
+        {status === 'success' && whatsappUrl ? (
+          <p className='mt-3 text-sm font-medium text-brand-700'>
+            If WhatsApp did not open,{' '}
+            <a href={whatsappUrl} target='_blank' rel='noreferrer' className='underline underline-offset-4'>
+              tap here to continue
+            </a>
+            .
           </p>
         ) : null}
 
@@ -161,3 +194,4 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
     </div>
   );
 }
+

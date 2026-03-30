@@ -362,7 +362,7 @@ export const siteConfig = {
     'Vrinda Face & Superspeciality Hospital provides advanced medical care with modern facilities and experienced doctors. We are committed to offering accurate diagnosis, quality treatment, and compassionate patient care in a safe and comfortable environment.',
   phone: '+91 76651 71546',
   emergencyPhone: '+91 76651 71546',
-  whatsappPhone: '+91 76651 71546',
+  whatsappPhone: '+91 9714460259',
   email: 'care@vrindahospital.com',
   address: {
     street: '9-A, Main Pal Road, Opp. Hanwant School, Dalle Khan Chakki Circle, Baldev Nagar',

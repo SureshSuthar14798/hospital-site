@@ -79,15 +79,15 @@ export default function HomePage() {
 
           <FadeIn delay={0.1}>
             <div className='relative overflow-hidden rounded-[2rem] border border-white/70 bg-hero-grid p-3 shadow-soft'>
-              <Image src='https://images.pexels.com/photos/21073473/pexels-photo-21073473.jpeg?auto=compress&cs=tinysrgb&w=1600'  alt='Modern hospital interior and patient care environment' width={780} height={500} className='h-[500px] w-full rounded-[1.5rem]' priority />
-              <div className='absolute bottom-6 left-6 right-6 rounded-[1.5rem] border border-white/80 bg-white/90 p-5 shadow-card backdrop-blur'>
+              <Image src='/images/hospital.png'  alt='Modern hospital interior and patient care environment' width={780} height={700} className='h-[500px] w-full rounded-[1.5rem]' priority />
+              <div className='absolute bottom-6 left-6 right-6 rounded-[1.5rem] border border-white/80 bg-white/90 px-5 py-3 shadow-card backdrop-blur'>
                 <p className='text-sm font-semibold uppercase tracking-[0.18em] text-brand-600'>
                   Emergency ready
                 </p>
-                <div className='mt-3 flex items-center flex-wrap justify-between gap-4'>
+                <div className='mt-1 flex items-center flex-wrap justify-between gap-2'>
                   <div>
                     <p className='text-lg font-semibold text-ink'>24/7 emergency care and quick admissions</p>
-                    <p className='mt-1 text-sm text-slate-600'>Rapid triage, supportive staff, and modern diagnostic support.</p>
+                    <p className='text-sm text-slate-600'>Rapid triage, supportive staff, and modern diagnostic support.</p>
                   </div>
                   <a href={`tel:${siteConfig.emergencyPhone}`} className='rounded-full bg-brand-700 px-4 py-3 text-sm font-semibold text-white'>
                     Emergency

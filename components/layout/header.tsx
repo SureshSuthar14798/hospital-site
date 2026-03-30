@@ -15,7 +15,7 @@ const navigation = [
   { href: '/doctors', label: 'Doctors' },
   { href: '/services', label: 'Services' },
   { href: '/appointment', label: 'Appointment' },
-  { href: '/blog', label: 'Blog' },
+  // { href: '/blog', label: 'Blog' },
   { href: '/contact', label: 'Contact' }
 ];
 
