@@ -99,7 +99,7 @@ export function Header() {
             </a>
             <Link
               href='/appointment'
-              className='inline-flex items-center rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700'
+              className='inline-flex items-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700'
             >
               Book Appointment
             </Link>

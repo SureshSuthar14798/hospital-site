@@ -1,8 +1,8 @@
-﻿'use client';
+'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { siteConfig, type Doctor, type Service } from '@/lib/data';
+import { type Doctor, type Service } from '@/lib/data';
 
 type AppointmentFormProps = {
   doctors: Doctor[];
@@ -24,7 +24,12 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
   const [form, setForm] = useState(initialState);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
-  const [whatsappUrl, setWhatsappUrl] = useState('');
+  const [minDate, setMinDate] = useState('');
+
+  // Set min date on client only to avoid hydration mismatch
+  useEffect(() => {
+    setMinDate(new Date().toISOString().split('T')[0]);
+  }, []);
 
   const filteredDoctors = useMemo(() => {
     if (!form.department) {
@@ -42,10 +47,9 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
     return doctors.find((doctor) => doctor.slug === form.doctor)?.name ?? form.doctor;
   }, [doctors, form.doctor]);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
-    setWhatsappUrl('');
 
     if (!form.patientName || !form.phone || !form.email || !form.department || !form.doctor || !form.date || !form.time) {
       setError('Please complete all required fields before submitting.');
@@ -58,33 +62,29 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
       const formattedDate = new Intl.DateTimeFormat('en-IN', {
         dateStyle: 'long'
       }).format(new Date(`${form.date}T00:00:00`));
-      const normalizedWhatsappNumber = siteConfig.whatsappPhone.replace(/\D/g, '');
-      const message = [
-        'New Appointment Request',
-        '',
-        `Patient Name: ${form.patientName}`,
-        `Phone: ${form.phone}`,
-        `Email: ${form.email}`,
-        `Department: ${departmentName}`,
-        `Doctor: ${doctorName}`,
-        `Preferred Date: ${formattedDate}`,
-        `Preferred Time: ${form.time}`,
-        `Symptoms / Message: ${form.message || 'Not provided'}`
-      ].join('\n');
-      const nextWhatsappUrl = `https://wa.me/${normalizedWhatsappNumber}?text=${encodeURIComponent(message)}`;
 
-      setWhatsappUrl(nextWhatsappUrl);
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          departmentName,
+          doctorName,
+          formattedDate
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
       setStatus('success');
       setForm(initialState);
-
-      const popup = window.open(nextWhatsappUrl, '_blank', 'noopener,noreferrer');
-
-      if (!popup) {
-        window.location.href = nextWhatsappUrl;
-      }
-    } catch {
+    } catch (err) {
       setStatus('error');
-      setError('Unable to open WhatsApp right now. Please call the hospital directly.');
+      setError(err instanceof Error ? err.message : 'Unable to submit appointment. Please call the hospital directly.');
     }
   }
 
@@ -96,25 +96,28 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
     }));
   }
 
+  const inputClass = 'w-full min-w-0 rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400';
+  const selectClass = 'w-full min-w-0 appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-brand-400';
+
   return (
     <div className='grid gap-8 lg:grid-cols-[1.05fr,0.95fr]'>
-      <form onSubmit={handleSubmit} className='rounded-[2rem] border border-slate-200 bg-white p-6 shadow-card sm:p-8'>
+      <form onSubmit={handleSubmit} className='min-w-0 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-card sm:p-8'>
         <div className='grid gap-5 sm:grid-cols-2'>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700'>
             Patient name
-            <input placeholder='Pankaj Sharma' value={form.patientName} onChange={(event) => updateField('patientName', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input placeholder='Pankaj Sharma' value={form.patientName} onChange={(event) => updateField('patientName', event.target.value)} className={inputClass} />
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700'>
             Phone number
-            <input placeholder='+91 98765 43210' type='tel' value={form.phone} onChange={(event) => updateField('phone', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input placeholder='+91 98765 43210' type='tel' value={form.phone} onChange={(event) => updateField('phone', event.target.value)} className={inputClass} />
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700'>
             Email
-            <input placeholder='pankaj.sharma@example.com' type='email' value={form.email} onChange={(event) => updateField('email', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input placeholder='pankaj.sharma@example.com' type='email' value={form.email} onChange={(event) => updateField('email', event.target.value)} className={inputClass} />
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700'>
             Department
-            <select value={form.department} onChange={(event) => updateField('department', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400'>
+            <select value={form.department} onChange={(event) => updateField('department', event.target.value)} className={selectClass}>
               <option value=''>Select department</option>
               {services.map((service) => (
                 <option key={service.slug} value={service.slug}>
@@ -123,9 +126,9 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
               ))}
             </select>
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700'>
             Doctor
-            <select value={form.doctor} onChange={(event) => updateField('doctor', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400'>
+            <select value={form.doctor} onChange={(event) => updateField('doctor', event.target.value)} className={selectClass}>
               <option value=''>Select doctor</option>
               {filteredDoctors.map((doctor) => (
                 <option key={doctor.slug} value={doctor.slug}>
@@ -134,42 +137,41 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
               ))}
             </select>
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700'>
             Preferred date
-            <input type='date' min={new Date().toISOString().split('T')[0]} value={form.date} onChange={(event) => updateField('date', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input type='date' min={minDate} value={form.date} onChange={(event) => updateField('date', event.target.value)} className={inputClass} />
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700 sm:col-span-2'>
             Preferred time
-            <input type='time' value={form.time} onChange={(event) => updateField('time', event.target.value)} className='rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <input type='time' value={form.time} onChange={(event) => updateField('time', event.target.value)} className={inputClass} />
           </label>
-          <label className='grid gap-2 text-sm font-medium text-slate-700 sm:col-span-2'>
+          <label className='grid min-w-0 gap-2 text-sm font-medium text-slate-700 sm:col-span-2'>
             Message or symptoms
-            <textarea placeholder='Describe your symptoms or concerns...' value={form.message} onChange={(event) => updateField('message', event.target.value)} rows={5} className='rounded-[1.5rem] border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
+            <textarea placeholder='Describe your symptoms or concerns...' value={form.message} onChange={(event) => updateField('message', event.target.value)} rows={5} className='w-full min-w-0 rounded-[1.5rem] border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-400' />
           </label>
         </div>
 
         {error ? <p className='mt-4 text-sm font-medium text-rose-600'>{error}</p> : null}
         {status === 'success' ? (
-          <p className='mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700'>
-            WhatsApp opened with your appointment details. Please press send in WhatsApp to complete your request.
-          </p>
-        ) : null}
-        {status === 'success' && whatsappUrl ? (
-          <p className='mt-3 text-sm font-medium text-brand-700'>
-            If WhatsApp did not open,{' '}
-            <a href={whatsappUrl} target='_blank' rel='noreferrer' className='underline underline-offset-4'>
-              tap here to continue
-            </a>
-            .
-          </p>
+          <div className='mt-4 rounded-2xl bg-emerald-50 px-4 py-4'>
+            <div className='flex items-center gap-2'>
+              <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' className='size-5 shrink-0 text-emerald-600'>
+                <path fillRule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.06l2.5 2.5a.75.75 0 001.137-.089l4-5.5z' clipRule='evenodd' />
+              </svg>
+              <p className='text-sm font-semibold text-emerald-700'>Appointment submitted successfully!</p>
+            </div>
+            <p className='mt-1.5 text-sm leading-5 text-emerald-600'>
+              Your appointment details have been sent. Our front desk team will review and confirm your booking shortly.
+            </p>
+          </div>
         ) : null}
 
-        <button type='submit' disabled={status === 'submitting'} className='mt-6 inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-70'>
+        <button type='submit' disabled={status === 'submitting'} className='mt-6 inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-70 sm:w-auto'>
           {status === 'submitting' ? 'Submitting...' : 'Confirm Appointment'}
         </button>
       </form>
 
-      <aside className='rounded-[2rem] border border-brand-100 bg-brand-50 p-6 shadow-card sm:p-8'>
+      <aside className='rounded-[2rem] border border-brand-100 bg-brand-50 p-5 shadow-card sm:p-8'>
         <p className='text-sm font-semibold uppercase tracking-[0.22em] text-brand-600'>
           Booking support
         </p>
@@ -194,4 +196,3 @@ export function AppointmentForm({ doctors, services }: AppointmentFormProps) {
     </div>
   );
 }
-

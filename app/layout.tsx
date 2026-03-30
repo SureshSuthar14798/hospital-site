@@ -7,6 +7,7 @@ import './globals.css';
 import { Footer } from '@/components/layout/footer';
 import { FloatingActions } from '@/components/layout/floating-actions';
 import { Header } from '@/components/layout/header';
+import { PageLoader } from '@/components/layout/page-loader';
 import { siteConfig } from '@/lib/data';
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -57,6 +58,7 @@ export default function RootLayout({
           </>
         ) : null}
         <div className='relative min-h-screen'>
+          <PageLoader />
           <Header />
           <main>{children}</main>
           <Footer />
